@@ -120,7 +120,7 @@ export const directorRouter = createRouter({
       return { ok: true };
     }),
 
-  /** Take the currently active round down — clears the live badge platform-wide. */
+  /** Take the currently active round down \u2014 clears the live badge platform-wide. */
   deactivateRound: publicQuery.input(z.object(tokenInput)).mutation(async ({ input }) => {
     const session = await requireDirector(input.token);
     await getDb()
@@ -130,7 +130,7 @@ export const directorRouter = createRouter({
     return { ok: true };
   }),
 
-  /** Bulk score upsert — powers the 30s autosave marking grid. Strictly category-isolated. */
+  /** Bulk score upsert \u2014 powers the 30s autosave marking grid. Strictly category-isolated. */
   upsertScores: publicQuery
     .input(z.object({ ...tokenInput, round: z.number().int().min(1).max(3), entries: z.array(z.object({ teamId: z.number(), criteriaId: z.number(), value: z.union([z.number(), z.string()]) })) }))
     .mutation(async ({ input }) => {
@@ -142,13 +142,13 @@ export const directorRouter = createRouter({
         if (crit.round !== input.round) {
           throw new TRPCError({ code: "FORBIDDEN", message: "Criterion/round mismatch." });
         }
-        // Standard integer conversion — accepts both numeric and raw text
+        // Standard integer conversion \u2014 accepts both numeric and raw text
         // payloads from the marking grid (mobile text-keyboard entry).
         const parsed = typeof entry.value === "string" ? parseInt(entry.value, 10) : entry.value;
         if (Number.isNaN(parsed)) {
           throw new TRPCError({ code: "BAD_REQUEST", message: "Score value must be an integer." });
         }
-        // Negative marking permitted — deductions may push the value below zero,
+        // Negative marking permitted \u2014 deductions may push the value below zero,
         // but never above the criterion's max.
         const value = Math.min(parsed, crit.maxPoints);
         await db
@@ -169,7 +169,7 @@ export const directorRouter = createRouter({
         .values({ categoryId: session.categoryId, name: input.name, school: input.school ?? null })
         .$returningId();
       await registerTeamInCategory(id, session.categoryId);
-      return { ok: true, teamId: id };
+      return { ok: true };
     }),
 
   /** Remove a team from THIS category. If it's their only registration, the entity is deleted. */
@@ -220,14 +220,14 @@ export const directorRouter = createRouter({
         .values({ categoryId: session.categoryId, round: input.round, resultsLive: true })
         .onDuplicateKeyUpdate({ set: { resultsLive: true } });
       await db.insert(announcements).values({
-        text: `📣 ${category.name} Round ${input.round} results are now LIVE!`,
+        text: `\ud83d\udce2 ${category.name} Round ${input.round} results are now LIVE!`,
         active: true,
       });
       return { ok: true };
     }),
 
   /**
-   * ⚠️ LOCAL ROSTER RESET — purges every team, member record, cached score and
+   * \u26a0\ufe0f LOCAL ROSTER RESET \u2014 purges every team, member record, cached score and
    * dynamic criterion owned by THIS director's category only. Multi-category
    * teams registered elsewhere keep their other-category registrations; their
    * footprint inside this category is still fully removed. Other categories
