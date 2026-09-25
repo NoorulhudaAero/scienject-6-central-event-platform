@@ -75,7 +75,8 @@ export async function requireAdmin(token: string | undefined) {
 }
 
 /** Department guard — session MUST be a department head with a valid allocation. */
-export async function requireDepartment(token: string | undefined) {
+export async function requireDepartment(token: string | undefi
+ned) {
   const session = await resolveSession(token);
   if (session.role !== "department" || !session.allocationSlug) {
     throw new TRPCError({ code: "FORBIDDEN", message: "Department credentials required for this action." });
@@ -94,7 +95,7 @@ export async function verifyDepartmentLogin(slug: string, pin: string) {
 
 export async function verifyDirectorLogin(slug: string, pin: string) {
   const db = getDb();
-  const [category] = await db.select().from(categories).where(eq(categories.slug, cat.slug)).limit(1);
+  const [category] = await db.select().from(categories).where(eq(categories.slug, slug)).limit(1);
   if (!category || category.pinHash !== hashPin(pin)) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid category or Secret PIN." });
   }

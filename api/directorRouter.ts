@@ -220,7 +220,7 @@ export const directorRouter = createRouter({
         .values({ categoryId: session.categoryId, round: input.round, resultsLive: true })
         .onDuplicateKeyUpdate({ set: { resultsLive: true } });
       await db.insert(announcements).values({
-        text: `📢 ${category.name} Round ${input.round} results are now LIVE!`,
+ text: `📢 ${category.name} Round ${input.round} results are now LIVE!`,
         active: true,
       });
       return { ok: true };
@@ -259,7 +259,8 @@ export const directorRouter = createRouter({
 
       // fully drop only teams whose entire existence lived inside this category
       let purgedTeams = 0;
-      let purgedMembers = 0;
+      let pur
+gedMembers = 0;
       for (const t of legacyTeams) {
         const remaining = await db.select().from(teamRegistrations).where(eq(teamRegistrations.teamId, t.id)).limit(1);
         if (remaining.length === 0) {
@@ -303,7 +304,8 @@ export const directorRouter = createRouter({
       const session = await requireDirector(input.token);
       await getDb()
         .update(categories)
-        .set({ evalTimerEndsAt: null, evalTimerRound: null })
+        .set({ evalTimerEndsAt: null,
+ evalTimerRound: null })
         .where(eq(categories.id, session.categoryId));
       return { ok: true };
     }),

@@ -20,7 +20,8 @@ app.get("/uploads/*", async (c) => {
   const root = path.resolve(process.cwd(), "uploads");
   const file = path.resolve(process.cwd(), rel);
   if (!file.startsWith(root) || !fs.existsSync(file)) return c.json({ error: "Not Found" }, 404);
-  const ext = path.extname(file).toLowerCase();
+  const ext = path.extname(file).toLo
+werCase();
   const mime =
     { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".gif": "image/gif", ".mp4": "video/mp4", ".mov": "video/quicktime", ".webm": "video/webm" }[ext] ??
     "application/octet-stream";
@@ -62,7 +63,8 @@ app.get("/api/study-guide/:slug", async (c) => {
   } catch {
     // fall through to the placeholder
   }
-  const pdf = buildStudyGuidePdf({ name: cat.name, discipline: cat.discipline, description: cat.description });
+  const pdf = buildStudyG
+uidePdf({ name: cat.name, discipline: cat.discipline, description: cat.description });
   return new Response(new Uint8Array(pdf), {
     headers: {
       "Content-Type": "application/pdf",

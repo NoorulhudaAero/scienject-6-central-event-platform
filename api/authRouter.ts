@@ -51,7 +51,8 @@ export const authRouter = createRouter({
       const db = getDb();
       if (session.role === "director" && session.categoryId != null) {
         const { categories } = await import("../db/schema");
-        const [cat] = await db.select().from(categories).where(eq(categories.id, session.categoryId)).limit(1);
+        const [cat] = await db.select().from(categories).where(eq(categories.id, sessi
+on.categoryId)).limit(1);
         categoryName = cat?.name ?? null;
       }
       if (session.role === "department" && session.allocationSlug) {

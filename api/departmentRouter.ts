@@ -54,7 +54,8 @@ export const departmentRouter = createRouter({
       const catRows = await db.select().from(categories);
       const attendanceRows = await db.select().from(teamAttendance);
       const membership = await membershipMap();
-      const members = await membersMap();
+  
+    const members = await membersMap();
 
       const catName = (id: number) => catRows.find((c) => c.id === id)?.name ?? "—";
       return teamRows
@@ -86,7 +87,7 @@ export const departmentRouter = createRouter({
         );
     }),
 
-  // ─── Media gallery management (Media department only) ───────────
+  // ─── Media gallery management (Media department only) ──────────────────
   mediaList: publicQuery.input(z.object(tokenInput)).query(async ({ input }) => {
     await requireMedia(input.token);
     const rows = await getDb().select().from(mediaItems).orderBy(desc(mediaItems.createdAt));
@@ -96,7 +97,7 @@ export const departmentRouter = createRouter({
   mediaAdd: publicQuery
     .input(
       z.object({
-        ...tokenInput,
+       ...tokenInput,
         kind: z.enum(["photo", "video"]).default("photo"),
         url: z.string().max(1000).refine((u) => /^https?:\/\//.test(u) || u.startsWith("/uploads/"), "Provide a valid URL or an uploaded file path."),
         title: z.string().max(255).optional(),
@@ -142,7 +143,8 @@ export const departmentRouter = createRouter({
       }
       const buf = Buffer.from(input.base64, "base64");
       if (!buf.length) throw new TRPCError({ code: "BAD_REQUEST", message: "Empty file payload." });
-      const safeName = input.fileName.replace(/\.[A-Za-z0-9]+$/, "").replace(/[^A-Za-z0-9-_]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "media";
+      const safeName = input.fileName.replace(/\.[A-Za-z0-9]+$/, "
+").replace(/[^A-Za-z0-9-_]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "media";
       const stamp = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
       const rel = `uploads/media/${stamp}-${safeName}.${ext}`;
       const fs = await import("node:fs");
@@ -158,7 +160,7 @@ export const departmentRouter = createRouter({
     .mutation(async ({ input }) => {
       await requireMedia(input.token);
       const db = getDb();
-      const [row] = await getDb().select().from(mediaItems).where(eq(mediaItems.id, input.id)).limit(1);
+      const [row] = await db.select().from(mediaItems).where(eq(mediaItems.id, input.id)).limit(1);
       await db.delete(mediaItems).where(eq(mediaItems.id, input.id));
       // If the record referenced a locally ingested asset, purge the file too.
       if (row?.url.startsWith("/uploads/")) {
@@ -178,7 +180,8 @@ export const departmentRouter = createRouter({
    */
   exportPassports: publicQuery
     .input(z.object({ ...tokenInput, teamId: z.number().int().positive() }))
-    .mutation(async ({ input }) => {
+    .mutation(async 
+({ input }) => {
       await requireDepartment(input.token);
       const db = getDb();
       const [team] = await db.select().from(teams).where(eq(teams.id, input.teamId)).limit(1);
@@ -223,7 +226,8 @@ export const departmentRouter = createRouter({
       };
     }),
 
-  /** Register one team into ONE OR MORE categories simultaneously. */
+  /**
+   * Register one team into ONE OR MORE categories simultaneously. */
   addTeam: publicQuery
     .input(
       z.object({
@@ -270,7 +274,8 @@ export const departmentRouter = createRouter({
     .input(z.object({ ...tokenInput, csvText: z.string().min(1) }))
     .mutation(async ({ input }) => {
       await requireDepartment(input.token);
-      const rows = parseMemberRows(input.csvText);
+      const rows = parseMemberRows(inpu
+t.csvText);
       if (rows.length === 0) {
         throw new TRPCError({
           code: "BAD_REQUEST",

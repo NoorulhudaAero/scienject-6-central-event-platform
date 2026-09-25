@@ -77,7 +77,7 @@ export const adminRouter = createRouter({
       const catTeams = allTeams.filter((t) => membership.get(t.id)?.has(c.id));
       const catCritIds = critRows.filter((x) => x.categoryId === c.id && x.round === c.activeRound).map((x) => x.id);
       const gradedTeamIds = new Set(
-        scoreRows.filter((s) => s.round === c.activeRound && catCritIds.includes(s.criteriaId)).map((s) => s.teamId),
+    scoreRows.filter((s) => s.round === c.activeRound && catCritIds.includes(s.criteriaId)).map((s) => s.teamId),
       );
       const cfg = configRows.find((r) => r.categoryId === c.id && r.round === c.activeRound);
       return {
@@ -321,13 +321,13 @@ export const adminRouter = createRouter({
       await requireAdmin(input.token);
       const db = getDb();
       await db.delete(teamRegistrations).where(eq(teamRegistrations.teamId, input.teamId));
-      await db.delete(teamMembers).where(eq(teamMembers.teamId, input.teamId));
+     await db.delete(teamMembers).where(eq(teamMembers.teamId, input.teamId));
       await db.delete(scores).where(eq(scores.teamId, input.teamId));
       await db.delete(teams).where(eq(teams.id, input.teamId));
       return { ok: true };
     }),
 
-  // ─── Ticker Controller ───────────────────────────────────────────
+  // ─── Ticker Controller ──────────────────────────────────────────────
   listAnnouncements: publicQuery.input(z.object(tokenInput)).query(async ({ input }) => {
     await requireAdmin(input.token);
     return getDb().select().from(announcements).orderBy(desc(announcements.createdAt)).limit(30);
@@ -360,7 +360,7 @@ export const adminRouter = createRouter({
       return { ok: true };
     }),
 
-  // ─── Live Point Scale Tuning Desk ────────────────────────────────
+  // ─── Live Point Scale Tuning Desk ─────────────────────────────────────────────
   /** Current live scale values + factory baselines (for the tuning desk UI). */
   getPointScale: publicQuery.input(z.object(tokenInput)).query(async ({ input }) => {
     await requireAdmin(input.token);
@@ -400,14 +400,14 @@ export const adminRouter = createRouter({
       return { ok: true, live };
     }),
 
-  // ─── Delegate feedback (isolated table — admin-only viewer) ───────
+  // ─── Delegate feedback (isolated table — admin-only viewer) ──────────────
   listFeedback: publicQuery.input(z.object(tokenInput)).query(async ({ input }) => {
     await requireAdmin(input.token);
     const rows = await getDb().select().from(feedbackResponses).orderBy(desc(feedbackResponses.createdAt));
     return rows;
   }),
 
-  // ─── Urgent flash alert — full-screen override on every public screen ───
+  // ─── Urgent flash alert — full-screen override on every public screen ────
   emitFlashAlert: publicQuery
     .input(z.object({ ...tokenInput, text: z.string().min(1).max(1000) }))
     .mutation(async ({ input }) => {
@@ -427,7 +427,7 @@ export const adminRouter = createRouter({
     return { ok: true };
   }),
 
-  // ─── Category runtime overrides (venue mapping, params, live status) ───
+  // ─── Category runtime overrides (venue mapping, params, live status) ────
   updateCategory: publicQuery
     .input(
       z.object({
@@ -486,7 +486,7 @@ export const adminRouter = createRouter({
       return { ok: true };
     }),
 
-  // ─── Timeline schedule CRUD ──────────────────────────────────────
+  // ─── Timeline schedule CRUD ─────────────────────────────────────────────
   listSchedule: publicQuery.input(z.object(tokenInput)).query(async ({ input }) => {
     await requireAdmin(input.token);
     return listScheduleChronological();
@@ -550,7 +550,7 @@ export const adminRouter = createRouter({
       return { ok: true, moved: true };
     }),
 
-  // ─── Sponsor management ──────────────────────────────────────────
+  // ─── Sponsor management ────────────────────────────────────────────
   listSponsors: publicQuery.input(z.object(tokenInput)).query(async ({ input }) => {
     await requireAdmin(input.token);
     return getDb().select().from(sponsors).orderBy(asc(sponsors.sortOrder));
