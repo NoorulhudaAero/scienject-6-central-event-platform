@@ -14,7 +14,7 @@ import {
   index,
 } from "drizzle-orm/mysql-core";
 
-// ─── Categories (13 hardcoded event categories) ─────────────────────────────
+// ─── Categories (13 hardcoded event categories) ─────────────────────────────────
 export const categories = mysqlTable("categories", {
   id: serial("id").primaryKey(),
   slug: varchar("slug", { length: 64 }).notNull().unique(),
@@ -32,5 +32,5 @@ export const categories = mysqlTable("categories", {
   createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 
-// ─── Teams ───────────────────────────────────────────────────
+// ─── Teams ──────────────────────────────────────────────────
 export const teams = mysqlTabl
