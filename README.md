@@ -76,3 +76,4 @@ key and all director PINs before any real-world exposure** (see Security).
 - Source files are split into small ES modules (e.g. `api/adminRouterA/B/C.ts`,
   `src/pages/dirDash/*`, `src/pages/dept/*`, `src/pages/admin/Section*.tsx`)
   so every file transports cleanly through the GitHub file API.
+"# Build Update" 
