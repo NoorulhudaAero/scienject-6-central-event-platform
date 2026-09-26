@@ -14,7 +14,7 @@ import {
   index,
 } from "drizzle-orm/mysql-core";
 
-// ──── Categories (13 hardcoded event categories) ────────────────────────────
+// ────── Categories (13 hardcoded event categories) ──────
 export const categories = mysqlTable("categories", {
   id: serial("id").primaryKey(),
   slug: varchar("slug", { length: 64 }).notNull().unique(),
@@ -32,7 +32,7 @@ export const categories = mysqlTable("categories", {
   createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 
-// ──── Teams ─────────────────────────────────────────────────────────────────
+// ────── Teams ──────
 export const teams = mysqlTable(
   "teams",
   {
@@ -44,12 +44,11 @@ export const teams = mysqlTable(
     createdAt: timestamp("createdAt").notNull().defaultNow(),
   },
   (table) => ({
-    categoryIdx: index("teams_category_idx")
-.on(table.categoryId),
+    categoryIdx: index("teams_category_idx").on(table.categoryId),
   }),
 );
 
-// ──── Team ↔ Category registrations (many-to-many) ───────────────────────────
+// ────── Team ↔ Category registrations (many-to-many) ──────
 // A single team entity can register for multiple categories simultaneously.
 // teams.categoryId remains the "primary" category for legacy compatibility;
 // this join table is the authoritative source for category membership.
@@ -68,7 +67,7 @@ export const teamRegistrations = mysqlTable(
   }),
 );
 
-// ──── Individual team members (row-based roster engine) ─────────────────────
+// ────── Individual team members (row-based roster engine) ──────
 // One row per student. The CSV/Excel import pipeline ingests rows of
 // [Team Name, School Institution, Member Name, Categories] and lands each
 // student here, cross-populated into every category their team registered for.
@@ -86,7 +85,7 @@ export const teamMembers = mysqlTable(
   }),
 );
 
-// ──── Dynamic scoring criteria (per category, per round) ────────────────────
+// ────── Dynamic scoring criteria (per category, per round) ──────
 export const criteria = mysqlTable(
   "criteria",
   {
@@ -102,7 +101,7 @@ export const criteria = mysqlTable(
   }),
 );
 
-// ──── Per-round configuration: cutoff score + evaluation window close ───────
+// ────── Per-round configuration: cutoff score + evaluation window close ──────
 export const roundConfigs = mysqlTable(
   "round_configs",
   {
@@ -118,7 +117,7 @@ export const roundConfigs = mysqlTable(
   }),
 );
 
-// ──── Round-by-round physical location ledger ───────────────────────────────
+// ────── Round-by-round physical location ledger ──────
 // Authoritative room/branch/floor allocation per category per round. The flat
 // categories.room / categories.venue strings are only the legacy fallback when
 // no round row exists yet — every dashboard reads this table first.
@@ -139,7 +138,7 @@ export const roundLocations = mysqlTable(
   }),
 );
 
-// ──── Individual criterion scores ───────────────────────────────────────────
+// ────── Individual criterion scores ──────
 export const scores = mysqlTable(
   "scores",
   {
@@ -156,7 +155,7 @@ export const scores = mysqlTable(
   }),
 );
 
-// ──── Live announcements (ticker) ───────────────────────────────────────────
+// ────── Live announcements (ticker) ──────
 export const announcements = mysqlTable("announcements", {
   id: serial("id").primaryKey(),
   text: text("text").notNull(),
@@ -164,7 +163,7 @@ export const announcements = mysqlTable("announcements", {
   createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 
-// ──── Departments (support staff) ───────────────────────────────────────────
+// ────── Departments (support staff) ──────
 export const departments = mysqlTable("departments", {
   id: serial("id").primaryKey(),
   slug: varchar("slug", { length: 64 }).notNull().unique(),
@@ -173,7 +172,7 @@ export const departments = mysqlTable("departments", {
   createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 
-// ──── Master timeline schedule items (admin-editable) ───────────────────────
+// ────── Master timeline schedule items (admin-editable) ──────
 export const scheduleItems = mysqlTable("schedule_items", {
   id: serial("id").primaryKey(),
   dayLabel: varchar("dayLabel", { length: 64 }).notNull(),
@@ -183,14 +182,14 @@ export const scheduleItems = mysqlTable("schedule_items", {
   sortOrder: int("sortOrder").notNull().default(0),
 });
 
-// ──── Sponsors (dynamic carousel) ───────────────────────────────────────────
+// ────── Sponsors (dynamic carousel) ──────
 export const sponsors = mysqlTable("sponsors", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   sortOrder: int("sortOrder").notNull().default(0),
 });
 
-// ──── Helpdesk pings (directors ↔ departments ↔ admin) ─────────────────────
+// ────── Helpdesk pings (directors ↔ departments ↔ admin) ──────
 export const messages = mysqlTable(
   "messages",
   {
@@ -206,7 +205,7 @@ export const messages = mysqlTable(
   }),
 );
 
-// ──── Attendance checklist (Day 1–3) ───────────────────────────────────────
+// ────── Attendance checklist (Day 1–3) ──────
 export const teamAttendance = mysqlTable(
   "team_attendance",
   {
@@ -221,7 +220,7 @@ export const teamAttendance = mysqlTable(
   }),
 );
 
-// ──── Auth sessions (director PIN / department PIN / master admin key) ──────
+// ────── Auth sessions (director PIN / department PIN / master admin key) ──────
 export const sessions = mysqlTable(
   "sessions",
   {
@@ -238,7 +237,7 @@ export const sessions = mysqlTable(
   }),
 );
 
-// ──── Trash bin (soft-delete backups from global purge actions, 30-day TTL) ─
+// ────── Trash bin (soft-delete backups from global purge actions, 30-day TTL) ──────
 export const trashBackups = mysqlTable("trash_backups", {
   id: serial("id").primaryKey(),
   kind: mysqlEnum("kind", ["rosters", "pings"]).notNull(),
@@ -265,13 +264,12 @@ export type TeamAttendance = typeof teamAttendance.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
 export type TrashBackup = typeof trashBackups.$inferSelect;
 
-// ──── Delegate feedback (isolated — viewable exclusively in /admin) ─────────
+// ────── Delegate feedback (isolated — viewable exclusively in /admin) ──────
 export const feedbackResponses = mysqlTable("feedback_responses", {
   id: serial("id").primaryKey(),
   delegateName: varchar("delegateName", { length: 255 }).notNull(),
   school: varchar("school", { length: 255 }),
-  role: varchar("role", { length: 64 }).notNull
-().default("Delegate"),
+  role: varchar("role", { length: 64 }).notNull().default("Delegate"),
   overallRating: int("overallRating").notNull(), // 1–5
   organizationRating: int("organizationRating").notNull(), // 1–5
   venueRating: int("venueRating").notNull(), // 1–5
@@ -284,7 +282,7 @@ export const feedbackResponses = mysqlTable("feedback_responses", {
 
 export type FeedbackResponse = typeof feedbackResponses.$inferSelect;
 
-// ──── Urgent flash alerts (admin → every public screen) ────────────────────
+// ────── Urgent flash alerts (admin → every public screen) ──────
 export const flashAlerts = mysqlTable("flash_alerts", {
   id: serial("id").primaryKey(),
   text: text("text").notNull(),
@@ -295,7 +293,7 @@ export const flashAlerts = mysqlTable("flash_alerts", {
 
 export type FlashAlert = typeof flashAlerts.$inferSelect;
 
-// ──── Media gallery (public /media grid + Media department uploads) ─────────
+// ────── Media gallery (public /media grid + Media department uploads) ──────
 export const mediaItems = mysqlTable("media_items", {
   id: serial("id").primaryKey(),
   kind: mysqlEnum("kind", ["photo", "video"]).notNull().default("photo"),
@@ -308,7 +306,7 @@ export const mediaItems = mysqlTable("media_items", {
 
 export type MediaItem = typeof mediaItems.$inferSelect;
 
-// ──── Live point-scale settings (Master Admin tuning desk overrides) ─────────
+// ────── Live point-scale settings (Master Admin tuning desk overrides) ──────
 export const pointScaleSettings = mysqlTable("point_scale_settings", {
   id: serial("id").primaryKey(),
   key: varchar("key", { length: 32 }).notNull().unique(), // COMPULSORY_R1 …
