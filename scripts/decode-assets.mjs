@@ -19,6 +19,10 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
  *   <name>.partNN — parts concatenated in lexical order.
  */
 function readSidecar(dir, name) {
+  // Resilient to a missing assets directory entirely (e.g. a fresh CI
+  // checkout where the sidecars haven't been pushed yet) — treat that the
+  // same as "no sidecar" so the build can continue without the logo.
+  if (!existsSync(dir)) return null;
   const single = join(dir, name);
   if (existsSync(single)) return readFileSync(single, "utf8").trim();
   const parts = readdirSync(dir)
